@@ -70,6 +70,8 @@ const NoteSlice = createSlice({
             .addCase(getAllNotes.rejected , (state , action) => {
 
             })
+
+
     }
 })
 

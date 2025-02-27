@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Navbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import PasswordInput from "../../components/PasswordInput";
 import {validateEmail} from "../../util/util.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {AppDispatch, RootState} from "../../store/store.ts";
+import {login} from "../../slice/UserSlice.ts";
 
 
 interface LoginResponse {
@@ -15,6 +18,16 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+
+    const isAuth = useSelector((state : RootState) => state.user.isAuthenticated);
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isAuth) {
+            navigate("/dashboard");
+        }
+    }, [isAuth]);
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,35 +45,19 @@ const Login: React.FC = () => {
         setError("");
         setLoading(true);
 
-        try {
-            // Make the login API call
-            const response = await fetch('YOUR_API_URL_HERE', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data: LoginResponse = await response.json();
-
-            if (response.ok) {
-                // Handle successful login (e.g., saving token, redirecting, etc.)
-                console.log("Login successful:", data);
-                // Redirect or save token here
-            } else {
-                setError(data.message || "Login failed!");
-            }
-        } catch (err) {
-            setError("Something went wrong, please try again.");
-        } finally {
-            setLoading(false);
+        const passData = {
+            email: email,
+            password: password,
         }
+
+        dispatch(login(passData));
+
+
     };
 
     return (
         <>
-            <Navbar />
+
 
             <div className='flex items-center justify-center mt-28'>
                 <div className='w-96 border rounded bg-white px-7 py-10'>

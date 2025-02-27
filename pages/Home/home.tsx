@@ -25,8 +25,8 @@ const Home: React.FC = () => {
 
     console.log(notes);
 
-    const removeNote = async () => {
-        dispatch(deleteNote("67be8b4e821edc36ca7b3642"))
+    const removeNote = async (noteId : string) => {
+        dispatch(deleteNote(noteId))
     };
 
     const [openAddEditModal, setOpenAddEditModal] = useState<{
@@ -41,7 +41,7 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         dispatch(getAllNotes());
-    }, [openAddEditModal])
+    }, [openAddEditModal, notes])
 
     return (
         <>
@@ -57,7 +57,7 @@ const Home: React.FC = () => {
                                 tags= {note.tags}
                                 isPinned={() => {}}
                                 onEdit={() => {}}
-                                onDelete={() => {removeNote()}}
+                                onDelete={() => {removeNote(note._id)}}
                                 onPinNote={() => {}}
                             />
                         ))
